@@ -1,169 +1,83 @@
-# 🏆 FINAL HACKATHON — GUIDE (Roman Urdu)
+# 🏆 HCM LITE — RAAT KI GUIDE (Roman Urdu)
 
-> **Yeh file parh lo — raat ka poora plan yahin hai.**
-> Project folder: `D:\SMIT CLASS\Assignment\Final Hackathone`
-
----
-
-## 📋 Project Ka Status
-
-| Cheez | Status |
-|-------|--------|
-| Next.js 16 (JavaScript) + Tailwind CSS | ✅ Ready |
-| Supabase packages (`supabase-js`, `ssr`) | ✅ Installed |
-| Supabase boilerplate (client/server/middleware) | ✅ Ready |
-| Supabase project + API keys | ✅ Done (24 Oct — connection tested) |
-| Hackathon task ka code | ⏳ Task milne par |
-| Testing + deploy | ⏳ Aakhri stage |
+> **Task:** AI-assisted Human Capital Management system — 3 roles (Admin, HR, Employee), 9 modules, AI assistant jo real data se jawab de.
+> **Sab se zaroori:** Judges FRESH INSTALL se shuru karte hain — koi dummy data NAHI. Admin company banayega, HR employees, phir sab numbers unhi se aayenge.
 
 ---
 
-## 🤝 KAAM KI TAQSEEM — Ka kya kaam hai?
+## 📋 TONIGHT'S PLAN — Kya bana raha hai (priority order)
 
-### 🧑‍💻 GHOUS (Aap) ka kaam — sirf yeh 4 cheezein:
-1. **Supabase project banana** (Step 1 neeche) — 5 minute
-2. **SQL run karna** — jab ZCode code ke saath SQL de, use copy kar ke Supabase SQL Editor mein paste kar ke Run dabana — 1 minute
-3. **API keys `.env.local` mein daalna** (Step 3 neeche) — 2 minute
-4. **Vercel deploy karna** (sirf agar zaroorat ho) (Step 4 neeche) — 5 minute
+| # | Module | Kya hoga | Status |
+|---|--------|----------|--------|
+| 1 | Auth + Roles | Login, 3 roles (Admin/HR/Employee), first-run setup wizard, server-side guards | 🔨 |
+| 2 | Org Setup | Company settings (office 9:00, grace 15 min, weekend), departments, leave types (annual 14, sick 8, casual 10), holidays | 🔨 |
+| 3 | Employees | HR registers employee → login banta hai (temp password), directory + search, Employee 360 | 🔨 |
+| 4 | Attendance | Web check-in/out (server time), late/half-day/missing-checkout rules, daily board, calendar, corrections | 🔨 |
+| 5 | Leave | Apply/cancel, balance, overlap+holiday check, HR approval with comment | 🔨 |
+| 6 | Payroll Lite | Salary structure, monthly run, gross = 1.5×basic, tax slab, payslip PDF, Admin finalize (lock) | 🔨 |
+| 7 | Dashboards | 3 dashboards (Admin: headcount/attrition/cost · HR: present/late/pending · Employee: own hours/leave) | 🔨 |
+| 8 | AI Assistant | Chat panel + tools (headcount, attendance, late-comers, leave balance, payroll) + **smart leave** ("next Monday Tuesday off" → pre-filled form) + dashboard "Summarize" | 🔨 |
+| 9 | Comms & Audit | Announcements, notifications, audit log | 🔨 |
+| 10 | README + Deploy | Judges ke liye README, Vercel deploy | 🔨 |
 
-### 🤖 ZCode (AI) ka kaam — baqi SAB kuch:
-- Poora Next.js code — pages, components, styling
-- Database schema ka SQL likhna (aap sirf paste karoge)
-- Supabase queries, auth (agar task mein ho), API routes
-- Errors dhoond kar fix karna
-- App ko browser mein khol kar test karna (screenshots ke saath)
-- Deploy ke liye ready karna
-
-**👉 Matlab: aap sirf Supabase ke buttons dabao ge, code main likhunga.**
-
----
-
-## 🌙 RAAT KA WORKFLOW (step by step)
-
-1. **Task aaye** → poora text ZCode ko paste kar do (task ka PDF/docs ka content bhi)
-2. **ZCode plan banayega** → approve kar dena (Approve button)
-3. **ZCode code likhega** → phir aap ko bolega "SQL run karo" → neeche ka **SQL wala step** karo
-4. **Keys check karo** → agar bole "keys daalo" → neeche ka **Step 3** karo
-5. **ZCode app test karega** → browser mein khud khol kar check karega
-6. **Demo/submission** → agar live URL chahiye to **Step 4** (Vercel)
+**Score strategy (100 pts):** Core flows 25 + Analytics 20 + AI 15 + Code quality 15 + UI 10 + Security 10 + Demo 5. Bonus (camera attendance waghera) — sirf time mile to.
 
 ---
 
-## 🔧 AAP KE STEPS (detail mein)
+## 🤝 KAAM KI TAQSEEM
 
-### STEP 1 — Supabase Project Banana (sirf ek dafa)
+### 🤖 Mera kaam (ZCode):
+- Poora application code — saare pages, API routes, business rules, AI assistant, README, GitHub push
 
-1. Browser mein kholen: **[supabase.com](https://supabase.com)**
-2. **Start your project** / **Sign in** → **GitHub se login** karo (sab se easy)
-3. Login ke baad **New project** par click karo
-4. Form bharo:
-   - **Name:** `hackathon-project` (ya koi bhi naam)
-   - **Database Password:** koi strong password likho — **kahin note kar lo, bhoolna nahi!** (maslan: `Hack@2026!xyz`)
-   - **Region:** `Southeast Asia (Singapore)` — Pakistan ke sab se qareeb
-   - **Pricing Plan:** Free hi rehne do
-5. **Create new project** dabao → 2-3 minute lagega (coffee break ☕)
+### 🧑‍💻 Aap ka kaam (Ghous) — sirf yeh GUI steps:
 
-### SQL RUN KARNA (jab bhi ZCode SQL de)
+#### STEP 1 — Naya SQL run karna (jab main kahoon)
+- Purani `demo_tasks` hat jayegi, naye HCM tables banenge (employees, attendance, leave, payroll waghera)
+- Supabase → SQL Editor → New query → main jo SQL doon paste → Run → "Success" ka msg mujhe batao
 
-1. Supabase khul lo → apna project kholo
-2. **Left sidebar mein `SQL Editor`** par click karo (database icon)
-3. **New query** (ya `+`) dabao
-4. ZCode ka diya hua **poora SQL copy kar ke paste** karo
-5. **Run** button dabao (niche ya upar)
-6. **"Success. No rows returned"** jaisa message aaye to ho gaya ✅
-7. ZCode ko bata do "SQL run kar diya"
+#### STEP 2 — AI API key (10 min, OPTIONAL lekin 15 points ka hai!)
+AI assistant ke liye **free LLM API key** chahiye. Sab se easy (free + fast):
+1. **[console.groq.com](https://console.groq.com)** kholen → Google/GitHub se sign up (free)
+2. Left sidebar → **API Keys** → **Create API Key** → key copy karo
+3. Mujhe chat mein de do (ya khud `.env.local` mein last line add karo): `AI_API_KEY=gsk_...`
+- Agar key na mile to bhi chalega — main rule-based fallback bana raha hoon (demo crash nahi hoga, lekin real AI key se zyada impression)
 
-> ⚠️ Note: Har table ke liye ZCode naya SQL dega — har dera yehi process.
+#### STEP 3 — Vercel Deploy (judges ke liye HOSTED LINK zaroori — subah/taiyar hone par)
+1. Main code GitHub par push karunga (already connected)
+2. **[vercel.com](https://vercel.com)** → GitHub se login → **Add New → Project** → `Final_Hackathone` repo select
+3. **Environment Variables** mein 3 cheezein add karo (main values dunga):
+   - `NEXT_PUBLIC_SUPABASE_URL` · `NEXT_PUBLIC_SUPABASE_ANON_KEY` · `AI_API_KEY`
+4. Deploy → live URL milega (wohi submit karna hai LMS par)
 
-### STEP 3 — API Keys `.env.local` Mein Daalna
-
-1. Supabase mein **upar right `Connect`** ya **Settings (⚙️) → API** par jao
-2. Wahan 2 cheezein milengi — dono copy karo:
-   - **Project URL** (maslan: `https://abcdxyz.supabase.co`)
-   - **anon public key** (lambi string — `eyJhbGci...` se shuru hoti hai)
-3. Ab project folder mein **`.env.local`** file kholo (VS Code ya Notepad se)
-4. Is tarhan paste karo (=`ke baad, quote ke bina):
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=https://abcdxyz.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOi...poorikey...
-   ```
-5. **Save** karo (Ctrl+S)
-6. **Dev server restart karo**: terminal mein `Ctrl+C` dabao, phir `npm run dev` likho
-   (ya ZCode ko bolo "restart karo" — woh kar dega)
-
-> 🔒 **anon key public hoti hai — yeh share karna theek hai.** Lekin `service_role` key KABHI bhi use/share na karna!
-
-### STEP 4 — Vercel Deploy (sirf agar live URL chahiye)
-
-1. **[vercel.com](https://vercel.com)** → GitHub se login
-2. Pehle project GitHub par push karo (GitHub Desktop app se: Add → Create repository → Publish)
-3. Vercel par **Add New → Project** → apna repo select karo
-4. **Environment Variables** section mein yeh 2 add karo (STEP 3 wali values):
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-5. **Deploy** dabao → 2 minute mein live URL mil jayega 🎉
+#### STEP 4 — Demo practice (5-minute script brief mein hai)
+- Fresh setup → Admin company banata hai → HR login → HR 2-3 employees register → employee login → check-in → plain words mein leave ("need Monday Tuesday off") → HR approve → dashboard + Summarize → payroll run → Admin finalize → payslip download → "colleague ki salary?" (AI refuse karega) → audit log
 
 ---
 
-## ⚙️ KAAM KI COMMANDS
+## 📁 DATABASE TABLES (mera schema, aap ka SQL run)
 
-| Command | Kya karta hai |
-|---------|---------------|
-| `npm run dev` | App chalata hai → browser mein `http://localhost:3000` kholo |
-| `npm run build` | Production build (deploy se pehle check) |
-| `npm install` | Packages dobara install (agar node_modules delete ho) |
+`company_settings` · `profiles` (roles) · `departments` · `designations` · `leave_types` · `holidays` · `employees` · `attendance` · `attendance_corrections` · `leave_requests` · `payroll_runs` · `payslips` · `announcements` · `notifications` · `audit_log` · `ai_logs`
 
 ---
 
-## 🚨 EMERGENCY TIPS (kuch gadbad ho to)
+## 🚨 EMERGENCY TIPS
 
 | Masla | Hal |
 |-------|-----|
-| App nahi chal raha | ZCode ko poora error copy kar ke do — fix karega |
-| Keys dali, phir bhi error | Dev server **restart** karna zaroori hai (Ctrl+C → `npm run dev`) |
-| `Port 3000 in use` | `npx next dev -p 3001` chalao → `localhost:3001` kholo |
-| Supabase slow/hang | Page refresh karo; free plan thoda slow hota hai |
-| Time khatam hone wala hai | ZCode se kaho "core features pe focus karo, baaki skip" |
-| Demo se pehle | App ek dafa poori chala ke dekh lo + Supabase project open check karo (free plan 1 hafte inactive ho to pause kar deta hai) |
+| Kuch kaam na kare | Mujhe poora error text do — main fix karunga |
+| Keys badli? | Dev server restart (Ctrl+C → `npm run dev`) |
+| Port busy | `npx next dev -p 3001` |
+| AI jawab na de | Fallback rule-based jawab chalega — demo nahi rukega |
+| Vercel deploy fail | Local demo bhi chal sakta hai, main help karunga |
+| Time kam | Core flows (login→employee→check-in→leave→payroll) pehle — baaki skip |
 
 ---
 
-## 🔒 SECURITY RULES (hamesha yaad rakho)
+## 🔒 SECURITY (brief ki demands — main implement kar raha hoon)
 
-1. **`service_role` key** Supabase mein → KABHI code mein, chat mein, ya GitHub par NAHI
-2. `.env.local` file **khud hi git mein nahi jati** (gitignore mein already hai) — us se mat khelo
-3. Database password alag se note kar lo — reset karna masla ban sakta hai raat ko
-4. Demo ke waqt sirf `localhost` ya Vercel ka URL dikhao
+- Har API request par server-side role + scope check (sirf button chhupana kaafi nahi)
+- AI key sirf backend env mein — browser kabhi AI ko directly call nahi karta
+- Employee sirf apna data dekh sakta hai; doosre ki salary par AI bhi refuse karega
+- Audit log har important action ka
 
----
-
-## 📁 PROJECT KI STRUCTURE (reference)
-
-```
-Final Hackathone/
-├── app/
-│   ├── page.js          ← main page (abhi welcome screen hai)
-│   ├── layout.js        ← app ka layout
-│   └── globals.css      ← Tailwind + custom styles
-├── lib/
-│   └── supabase/
-│       ├── client.js    ← browser se Supabase connect
-│       ├── server.js    ← server se Supabase connect
-│       └── middleware.js← session handling
-├── middleware.js        ← Supabase auth middleware
-├── .env.local           ← ⏳ RAAT KO KEYS YAHAN DAALNI HAIN
-├── GUIDE.md             ← yeh file
-└── package.json
-```
-
----
-
-## ✅ SUBMIT SE PEHLE CHECKLIST
-
-- [ ] App `npm run dev` se sahi chal rahi hai
-- [ ] Sab features browser mein test kiye
-- [ ] Supabase mein data save ho raha hai (Table Editor mein dekh ke confirm)
-- [ ] (Agar deploy kiya) live URL kisi doosre device/browser mein bhi khula
-- [ ] Demo ke liye 2-3 minute ki story ready: masla kya tha → hum ne kya banaya → kaise kaam karta hai
-
-**Allah kare sab acha ho — GOOD LUCK! 🏆**
+**Good luck — aaj raat poora system banega! 🚀**

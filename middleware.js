@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
 
 export async function middleware(request) {
-  // Supabase keys abhi .env.local mein nahi hain to app normal chalta rahe
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
     return NextResponse.next()
   }

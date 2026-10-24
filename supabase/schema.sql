@@ -1,43 +1,254 @@
--- ============================================
--- PULSE DEMO SCHEMA — Supabase SQL Editor mein run karo
--- (Supabase → SQL Editor → New query → yeh sab paste → Run)
--- ============================================
+-- ============================================================
+-- HCM LITE — FULL SCHEMA (Supabase SQL Editor mein run karo)
+-- Fresh install: purana demo data hat jata hai, naye tables bante hain
+-- ============================================================
 
--- 1) Demo tasks table
-create table if not exists public.demo_tasks (
-  id uuid primary key default gen_random_uuid(),
-  title text not null,
-  status text not null default 'todo' check (status in ('todo', 'in_progress', 'done')),
-  priority text not null default 'medium' check (priority in ('low', 'medium', 'high')),
-  created_at timestamptz not null default now()
-);
-
--- 2) Row Level Security (demo ke liye public access — hackathon demo mode)
-alter table public.demo_tasks enable row level security;
-
+-- 1) Purana demo hatana
 drop policy if exists "demo_tasks_select" on public.demo_tasks;
 drop policy if exists "demo_tasks_insert" on public.demo_tasks;
 drop policy if exists "demo_tasks_update" on public.demo_tasks;
 drop policy if exists "demo_tasks_delete" on public.demo_tasks;
+drop table if exists public.demo_tasks;
 
-create policy "demo_tasks_select" on public.demo_tasks
-  for select to anon, authenticated using (true);
+-- 2) ENUM-style checks ke saath tables
 
-create policy "demo_tasks_insert" on public.demo_tasks
-  for insert to anon, authenticated with check (true);
+-- Company settings (ek hi row, id=1)
+create table if not exists public.company_settings (
+  id int primary key default 1 check (id = 1),
+  name text not null,
+  office_start time not null default '09:00',
+  grace_minutes int not null default 15,
+  weekend_days int[] not null default '{6,0}', -- 0=Sun .. 6=Sat
+  half_day_hours numeric not null default 5,
+  office_lat double precision,
+  office_lng double precision,
+  office_radius_m int default 150,
+  created_at timestamptz not null default now()
+);
 
-create policy "demo_tasks_update" on public.demo_tasks
-  for update to anon, authenticated using (true) with check (true);
+-- Profiles: har login user ka role (auth.users se linked)
+create table if not exists public.profiles (
+  id uuid primary key references auth.users(id) on delete cascade,
+  full_name text not null default '',
+  role text not null default 'employee' check (role in ('admin','hr','employee')),
+  employee_id uuid,
+  must_change_password boolean not null default false,
+  active boolean not null default true,
+  created_at timestamptz not null default now()
+);
 
-create policy "demo_tasks_delete" on public.demo_tasks
-  for delete to anon, authenticated using (true);
+-- Org setup
+create table if not exists public.departments (
+  id uuid primary key default gen_random_uuid(),
+  name text not null unique,
+  created_at timestamptz not null default now()
+);
 
--- 3) Seed data (demo ke liye 6 tasks)
-insert into public.demo_tasks (id, title, status, priority) values
-  ('a1000000-0000-4000-8000-000000000001', 'Design hero section animation', 'done', 'high'),
-  ('a1000000-0000-4000-8000-000000000002', 'Setup Supabase connection', 'done', 'high'),
-  ('a1000000-0000-4000-8000-000000000003', 'Build dashboard stats cards', 'in_progress', 'medium'),
-  ('a1000000-0000-4000-8000-000000000004', 'Add search & filters', 'todo', 'medium'),
-  ('a1000000-0000-4000-8000-000000000005', 'Write demo presentation script', 'todo', 'low'),
-  ('a1000000-0000-4000-8000-000000000006', 'Deploy to Vercel', 'todo', 'high')
-on conflict (id) do nothing;
+create table if not exists public.designations (
+  id uuid primary key default gen_random_uuid(),
+  name text not null unique,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.leave_types (
+  id uuid primary key default gen_random_uuid(),
+  name text not null unique,                -- annual / sick / casual / unpaid
+  annual_quota int,                          -- null = unlimited (unpaid)
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.holidays (
+  id uuid primary key default gen_random_uuid(),
+  holiday_date date not null unique,
+  name text not null,
+  created_at timestamptz not null default now()
+);
+
+-- Employees (HR registers; login banta hai)
+create table if not exists public.employees (
+  id uuid primary key default gen_random_uuid(),
+  code text not null unique,                 -- EMP-001
+  full_name text not null,
+  email text not null unique,
+  phone text default '',
+  address text default '',
+  gender text check (gender in ('male','female','other')) default 'male',
+  department_id uuid references public.departments(id),
+  designation text default '',
+  join_date date not null,
+  exit_date date,
+  status text not null default 'active' check (status in ('active','probation','exited')),
+  basic_salary numeric not null default 0 check (basic_salary >= 0),
+  created_at timestamptz not null default now()
+);
+
+-- Attendance: ek employee ki din ke liye ek record
+create table if not exists public.attendance (
+  id uuid primary key default gen_random_uuid(),
+  employee_id uuid not null references public.employees(id) on delete cascade,
+  work_date date not null,
+  check_in timestamptz,
+  check_out timestamptz,
+  status text not null default 'present'
+    check (status in ('present','late','half_day','missing_checkout','on_leave','absent')),
+  worked_hours numeric default 0,
+  source text not null default 'web' check (source in ('web','camera')),
+  created_at timestamptz not null default now(),
+  unique (employee_id, work_date)
+);
+
+create table if not exists public.attendance_corrections (
+  id uuid primary key default gen_random_uuid(),
+  employee_id uuid not null references public.employees(id) on delete cascade,
+  work_date date not null,
+  reason text not null,
+  status text not null default 'pending' check (status in ('pending','approved','rejected')),
+  decided_by uuid references public.profiles(id),
+  created_at timestamptz not null default now()
+);
+
+-- Leave
+create table if not exists public.leave_requests (
+  id uuid primary key default gen_random_uuid(),
+  employee_id uuid not null references public.employees(id) on delete cascade,
+  leave_type text not null,                 -- annual / sick / casual / unpaid
+  start_date date not null,
+  end_date date not null,
+  days numeric not null,
+  reason text default '',
+  status text not null default 'pending' check (status in ('pending','approved','rejected','cancelled')),
+  decided_by uuid references public.profiles(id),
+  decision_comment text,
+  created_at timestamptz not null default now()
+);
+
+-- Payroll
+create table if not exists public.payroll_runs (
+  id uuid primary key default gen_random_uuid(),
+  period_month int not null check (period_month between 1 and 12),
+  period_year int not null,
+  status text not null default 'draft' check (status in ('draft','finalized')),
+  created_by uuid references public.profiles(id),
+  finalized_by uuid references public.profiles(id),
+  finalized_at timestamptz,
+  total_gross numeric default 0,
+  total_net numeric default 0,
+  created_at timestamptz not null default now(),
+  unique (period_month, period_year)
+);
+
+create table if not exists public.payslips (
+  id uuid primary key default gen_random_uuid(),
+  run_id uuid not null references public.payroll_runs(id) on delete cascade,
+  employee_id uuid not null references public.employees(id) on delete cascade,
+  basic numeric not null default 0,
+  hra numeric not null default 0,
+  medical numeric not null default 0,
+  gross numeric not null default 0,
+  working_days numeric not null default 0,
+  payable_days numeric not null default 0,
+  absent_days numeric not null default 0,
+  half_days numeric not null default 0,
+  unpaid_leave_days numeric not null default 0,
+  deduction numeric not null default 0,
+  tax numeric not null default 0,
+  net numeric not null default 0,
+  created_at timestamptz not null default now(),
+  unique (run_id, employee_id)
+);
+
+-- Comms & audit
+create table if not exists public.announcements (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  body text not null,
+  posted_by uuid references public.profiles(id),
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.notifications (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  title text not null,
+  body text default '',
+  read boolean not null default false,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.audit_log (
+  id uuid primary key default gen_random_uuid(),
+  actor_id uuid references public.profiles(id),
+  actor_name text default '',
+  action text not null,                      -- create / update / approve / finalize / login ...
+  entity text not null,                      -- employees / leave / payroll ...
+  entity_id text default '',
+  before_json jsonb,
+  after_json jsonb,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.ai_logs (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references public.profiles(id),
+  question text not null,
+  tool_used text default '',
+  created_at timestamptz not null default now()
+);
+
+-- 3) Default leave types (rules se: annual 14, sick 8, casual 10, unpaid unlimited)
+insert into public.leave_types (name, annual_quota) values
+  ('annual', 14), ('sick', 8), ('casual', 10), ('unpaid', null)
+on conflict (name) do nothing;
+
+-- 4) RLS: authenticated users ke liye open (role/scope checks API layer mein server-side)
+alter table public.company_settings enable row level security;
+alter table public.profiles enable row level security;
+alter table public.departments enable row level security;
+alter table public.designations enable row level security;
+alter table public.leave_types enable row level security;
+alter table public.holidays enable row level security;
+alter table public.employees enable row level security;
+alter table public.attendance enable row level security;
+alter table public.attendance_corrections enable row level security;
+alter table public.leave_requests enable row level security;
+alter table public.payroll_runs enable row level security;
+alter table public.payslips enable row level security;
+alter table public.announcements enable row level security;
+alter table public.notifications enable row level security;
+alter table public.audit_log enable row level security;
+alter table public.ai_logs enable row level security;
+
+-- Public read for company name (login page pe dikhane ke liye) — baaki authenticated
+drop policy if exists "settings_public_read" on public.company_settings;
+create policy "settings_public_read" on public.company_settings
+  for select to anon using (true);
+
+drop policy if exists "settings_auth_write" on public.company_settings;
+create policy "settings_auth_write" on public.company_settings
+  for all to authenticated using (true) with check (true);
+
+drop policy if exists "profiles_self_read" on public.profiles;
+create policy "profiles_self_read" on public.profiles
+  for select to authenticated using (true);
+
+drop policy if exists "profiles_auth_write" on public.profiles;
+create policy "profiles_auth_write" on public.profiles
+  for all to authenticated using (true) with check (true);
+
+-- Baaki sab tables: authenticated full (API layer role-check karti hai)
+do $$
+declare t text;
+begin
+  foreach t in array array[
+    'departments','designations','leave_types','holidays','employees',
+    'attendance','attendance_corrections','leave_requests','payroll_runs',
+    'payslips','announcements','notifications','audit_log','ai_logs'
+  ]
+  loop
+    execute format('drop policy if exists "%s_auth_all" on public.%I', t, t);
+    execute format(
+      'create policy "%s_auth_all" on public.%I for all to authenticated using (true) with check (true)',
+      t, t
+    );
+  end loop;
+end $$;
