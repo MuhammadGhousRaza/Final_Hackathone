@@ -52,25 +52,25 @@ export default function Home() {
 
       <main className="relative mx-auto max-w-6xl px-6 pb-24 pt-20 text-center">
         <div className="animate-fade-up rounded-full border border-emerald-500/20 bg-emerald-500/5 px-4 py-1.5 text-xs font-medium text-emerald-300">
-          Saylani Hackathon · AI-assisted Human Capital Management
+          AI-assisted Human Capital Management
         </div>
 
         <h1 className="animate-fade-up delay-100 mt-8 max-w-3xl text-5xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl mx-auto">
-          HR ka poora din,
+          Your entire HR day,
           <br />
-          <span className="text-gradient">ek system mein</span>
+          <span className="text-gradient">in one system</span>
         </h1>
 
         <p className="animate-fade-up delay-200 mx-auto mt-6 max-w-xl text-lg text-zinc-400">
-          Employees, attendance, leave, payroll aur AI assistant — sab kuch live data par,
-          teen roles ke liye: Admin, HR aur Employee.
+          Employees, attendance, leave, payroll and an AI assistant — all running on live data,
+          for three roles: Admin, HR and Employee.
         </p>
 
         <div className="animate-fade-up delay-300 mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
           {needsSetup ? (
             <Link href="/setup">
               <Button size="lg">
-                First-run Setup — Company banao
+                First-run Setup — Create your company
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
@@ -97,7 +97,7 @@ export default function Home() {
         </div>
 
         <p className="mt-16 text-xs text-zinc-600">
-          Next.js + Supabase + Groq AI · Starts empty — Admin sets up, HR registers, employees work
+          Next.js + Supabase + AI · Starts empty — Admin sets up, HR registers, employees work
         </p>
       </main>
     </div>

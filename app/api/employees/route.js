@@ -36,12 +36,12 @@ export async function POST(req) {
   const b = await req.json()
   const required = ['full_name', 'email', 'join_date', 'department_id']
   for (const f of required) {
-    if (!b[f]) return json({ error: `${f} zaroori hai` }, 400)
+    if (!b[f]) return json({ error: `${f} is required` }, 400)
   }
   if (!Number(b.basic_salary) || Number(b.basic_salary) <= 0) {
-    return json({ error: 'Salary 0 se zyada honi chahiye' }, 400)
+    return json({ error: 'Salary must be greater than 0' }, 400)
   }
-  if (!/^\S+@\S+\.\S+$/.test(b.email)) return json({ error: 'Valid email nahi' }, 400)
+  if (!/^\S+@\S+\.\S+$/.test(b.email)) return json({ error: 'Invalid email address' }, 400)
 
   const { count } = await session.supabase
     .from('employees')
@@ -87,13 +87,13 @@ export async function POST(req) {
 
   let loginCreated = true
   if (res.error) {
-    loginCreated = false // employee record to ban gaya, login masla
+    loginCreated = false // employee row created, but login creation failed
     await audit(session.supabase, session, 'create', 'employee', emp.id, null, { code, login: 'FAILED: ' + res.error })
-    return json({ employee: emp, loginCreated: false, error: 'Employee ban gaya lekin login nahi bana: ' + res.error }, 200)
+    return json({ employee: emp, loginCreated: false, error: 'Employee created but login failed: ' + res.error }, 200)
   }
 
   await audit(session.supabase, session, 'create', 'employee', emp.id, null, { code, name: b.full_name, login: 'created' })
-  await notify(session.supabase, res.user.id, 'Welcome aboard!', `Aap ka employee account ban gaya hai (${code})`)
+  await notify(session.supabase, res.user.id, 'Welcome aboard!', `Your employee account has been created (${code})`)
 
   return json({ employee: emp, loginCreated: true, tempPassword: password })
 }

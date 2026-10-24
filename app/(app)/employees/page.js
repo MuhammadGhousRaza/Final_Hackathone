@@ -76,8 +76,8 @@ export default function EmployeesPage() {
           </div>
         ) : data.employees.length === 0 ? (
           <div className="flex flex-col items-center py-20 text-center">
-            <p className="font-semibold text-white">Koi employee nahi</p>
-            <p className="mt-1 text-sm text-zinc-500">Register kar ke shuru karein — login khud ban jayega</p>
+            <p className="font-semibold text-white">No employees yet</p>
+            <p className="mt-1 text-sm text-zinc-500">Register an employee — their login is created automatically</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -178,8 +178,8 @@ function RegisterModal({ org, onClose, onDone }) {
     return (
       <Modal open onClose={onClose} title="Employee Registered ✅">
         <p className="text-sm text-zinc-300">
-          <strong className="text-white">{created.name}</strong> ka account ban gaya.
-          Yeh temporary password employee ko dein — pehle sign-in par change hoga:
+          <strong className="text-white">{created.name}</strong>'s account is ready.
+          Share this temporary password with the employee — it must be changed on first sign-in:
         </p>
         <div className="mt-4 flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3">
           <code className="flex-1 break-all font-mono text-sm text-emerald-300">{created.password}</code>

@@ -9,7 +9,7 @@ export async function GET(req, { params }) {
   const id = params.id
   const isManager = profile?.role === 'admin' || profile?.role === 'hr'
   if (!isManager && profile?.employee_id !== id) {
-    return json({ error: 'Aap sirf apna data dekh sakte hain' }, 403)
+    return json({ error: 'You can only view your own data' }, 403)
   }
 
   const { data: employee } = await supabase
@@ -57,7 +57,7 @@ export async function PATCH(req, { params }) {
   const id = params.id
   const isManager = profile?.role === 'admin' || profile?.role === 'hr'
   if (!isManager && profile?.employee_id !== id) {
-    return json({ error: 'Employees sirf phone/address edit kar sakte hain' }, 403)
+    return json({ error: 'Employees can only edit their own phone and address' }, 403)
   }
 
   const b = await req.json()

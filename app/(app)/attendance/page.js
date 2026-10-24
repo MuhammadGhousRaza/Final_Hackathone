@@ -79,7 +79,7 @@ function EmployeeView({ me }) {
   return (
     <div>
       <h1 className="text-2xl font-bold tracking-tight text-white">My Attendance</h1>
-      <p className="mt-1 text-sm text-zinc-500">Check-in/out aur mahina ka record</p>
+      <p className="mt-1 text-sm text-zinc-500">Check in/out and your monthly record</p>
 
       <Card className="glow-emerald mt-6 p-6">
         <div className="flex flex-col items-center justify-between gap-5 sm:flex-row">
@@ -200,7 +200,7 @@ function CorrectionModal({ onClose, onDone }) {
     <Modal open onClose={onClose} title="Attendance Correction">
       <form onSubmit={submit} className="space-y-4">
         <Input label="Date" type="date" value={work_date} onChange={(e) => setWorkDate(e.target.value)} required />
-        <Input label="Reason" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="e.g. Internet down tha, HR se confirm karein" required />
+        <Input label="Reason" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="e.g. Internet was down, please confirm with HR" required />
         {error && <p className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-2.5 text-sm text-red-300">{error}</p>}
         <div className="flex justify-end gap-3">
           <Button type="button" variant="ghost" onClick={onClose}>Cancel</Button>
@@ -245,7 +245,7 @@ function ManagerView() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white">Attendance</h1>
-          <p className="mt-1 text-sm text-zinc-500">Daily board aur corrections</p>
+          <p className="mt-1 text-sm text-zinc-500">Daily board and corrections</p>
         </div>
         <input
           type="date"
@@ -317,7 +317,7 @@ function ManagerView() {
 
       {tab === "corrections" && (
         <Card className="mt-4 p-6">
-          {corrections.length === 0 && <p className="text-sm text-zinc-500">Koi correction request nahi</p>}
+          {corrections.length === 0 && <p className="text-sm text-zinc-500">No correction requests</p>}
           <div className="space-y-2">
             {corrections.map((c) => (
               <div key={c.id} className="flex flex-wrap items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] px-4 py-3 text-sm">

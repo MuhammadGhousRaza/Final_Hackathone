@@ -4,7 +4,7 @@ import { attendanceStatus, toDateStr } from '@/lib/rules'
 export async function POST() {
   const { supabase, user, profile } = await getSession()
   if (!user) return json({ error: 'Unauthorized' }, 401)
-  if (!profile?.employee_id) return json({ error: 'Aap ka employee record nahi milta' }, 400)
+  if (!profile?.employee_id) return json({ error: 'No employee record found for your account' }, 400)
 
   const today = toDateStr(new Date())
   const now = new Date().toISOString()
@@ -17,10 +17,10 @@ export async function POST() {
     .maybeSingle()
 
   if (!existing?.check_in) {
-    return json({ error: 'Pehle check-in karo' }, 400)
+    return json({ error: 'Please check in first' }, 400)
   }
   if (existing.check_out) {
-    return json({ error: 'Aaj check-out ho chuka hai' }, 409)
+    return json({ error: 'You have already checked out today' }, 409)
   }
 
   const { data: settings } = await supabase

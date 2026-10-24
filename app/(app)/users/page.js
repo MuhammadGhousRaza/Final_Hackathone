@@ -28,7 +28,7 @@ export default function UsersPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white">Users & HR</h1>
-          <p className="mt-1 text-sm text-zinc-500">HR logins banao, accounts deactivate karo</p>
+          <p className="mt-1 text-sm text-zinc-500">Create HR logins and deactivate accounts</p>
         </div>
         <Button onClick={() => setModal(true)}>
           <UserPlus className="h-4 w-4" /> Create HR Login
@@ -103,7 +103,7 @@ function CreateHRModal({ onClose, onDone }) {
       {tempPassword ? (
         <div>
           <p className="text-sm text-zinc-300">
-            <strong className="text-white">{fullName}</strong> ka HR account ban gaya. Temporary password dein (pehle sign-in par change hogi):
+            <strong className="text-white">{fullName}</strong>'s HR account is ready. Share the temporary password (it must be changed on first sign-in):
           </p>
           <div className="mt-4 flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3">
             <code className="flex-1 break-all font-mono text-sm text-emerald-300">{tempPassword}</code>

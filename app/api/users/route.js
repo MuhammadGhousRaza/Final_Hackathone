@@ -21,14 +21,14 @@ export async function POST(req) {
   if (error) return error
 
   const { fullName, email } = await req.json()
-  if (!fullName || !email) return json({ error: 'Name aur email zaroori' }, 400)
+  if (!fullName || !email) return json({ error: 'Name and email are required' }, 400)
 
   const password = tempPassword()
   const res = await createUserWithProfile({ email, password, fullName, role: 'hr' })
   if (res.error) return json({ error: res.error }, 400)
 
   await audit(session.supabase, session, 'create', 'hr_login', res.user.id, null, { email, role: 'hr' })
-  await notify(session.supabase, res.user.id, 'Welcome to HR', 'Admin ne aap ka HR account banaya hai')
+  await notify(session.supabase, res.user.id, 'Welcome to HR', 'Your HR account has been created by the Admin')
 
   return json({ ok: true, tempPassword: password })
 }
@@ -39,8 +39,8 @@ export async function PATCH(req) {
   if (error) return error
 
   const { id, active } = await req.json()
-  if (!id || active === undefined) return json({ error: 'id aur active zaroori' }, 400)
-  if (id === session.user.id) return json({ error: 'Apna khud ka account nahi' }, 400)
+  if (!id || active === undefined) return json({ error: 'id and active are required' }, 400)
+  if (id === session.user.id) return json({ error: 'You cannot deactivate your own account' }, 400)
 
   const { error: e } = await session.supabase
     .from('profiles')

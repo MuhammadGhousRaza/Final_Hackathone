@@ -63,34 +63,34 @@ async function fallbackAnswer(question, ctx) {
   const has = (...words) => words.some((w) => q.includes(w))
 
   if (has('salary', 'paycheck') && has('of', 'ki ') && ctx.profile?.role === 'employee') {
-    return { answer: "Sorry, main employees ko kisi ki salary nahi bata sakta — yeh private data hai. Aap apni payslip Payroll page se dekh sakte hain.", tool: 'policy_refusal' }
+    return { answer: "Sorry, I can't share anyone's salary with an employee — that's private. You can view your own payslip on the Payroll page.", tool: 'policy_refusal' }
   }
   if (has('headcount', 'how many employee', 'kitne employee', 'total employee', 'staff')) {
     const r = await runTool('get_headcount', {}, ctx)
     if (r.error) return { answer: r.error, tool: 'get_headcount' }
-    return { answer: `Total ${r.total} employees hain (${r.active} active, ${r.probation} probation).`, tool: 'get_headcount', data: r }
+    return { answer: `There are ${r.total} employees in total (${r.active} active, ${r.probation} on probation).`, tool: 'get_headcount', data: r }
   }
   if (has('late')) {
     const r = await runTool('get_late_comers', {}, ctx)
     if (r.error) return { answer: r.error, tool: 'get_late_comers' }
-    if (!r.length) return { answer: 'Is month koi late nahi aya. 👏', tool: 'get_late_comers' }
-    return { answer: 'Is month sab se zyada late aane wale: ' + r.map((x) => `${x.name} (${x.times_late}x)`).join(', ') + '.', tool: 'get_late_comers', data: r }
+    if (!r.length) return { answer: 'No one was late this month. 👏', tool: 'get_late_comers' }
+    return { answer: 'Most frequent late-comers this month: ' + r.map((x) => `${x.name} (${x.times_late}x)`).join(', ') + '.', tool: 'get_late_comers', data: r }
   }
   if (has('on leave', 'leave today', 'kaun leave', 'chutti')) {
     const r = await runTool('get_leave_summary', {}, ctx)
     if (r.error) return { answer: r.error, tool: 'get_leave_summary' }
-    if (!r.on_leave) return { answer: 'Aaj koi approved leave par nahi hai.', tool: 'get_leave_summary' }
-    return { answer: `Aaj ${r.on_leave} log leave par hain: ` + r.detail.map((d) => `${d.name} (${d.type})`).join(', ') + '.', tool: 'get_leave_summary', data: r }
+    if (!r.on_leave) return { answer: 'No one is on approved leave today.', tool: 'get_leave_summary' }
+    return { answer: `${r.on_leave} people are on leave today: ` + r.detail.map((d) => `${d.name} (${d.type})`).join(', ') + '.', tool: 'get_leave_summary', data: r }
   }
   if (has('balance', 'left', 'bach', 'kitni leave', 'how many leave', 'sick leave')) {
     const r = await runTool('get_my_leave_balance', {}, ctx)
     if (r.error) return { answer: r.error, tool: 'get_my_leave_balance' }
-    return { answer: 'Aap ki is saal ki leave balance: ' + r.map((b) => `${b.type}: ${b.left} bachi (${b.used} used)`).join(' · ') + '.', tool: 'get_my_leave_balance', data: r }
+    return { answer: 'Your leave balance this year: ' + r.map((b) => `${b.type}: ${b.left} left (${b.used} used)`).join(' · ') + '.', tool: 'get_my_leave_balance', data: r }
   }
   if (has('attendance', 'present today', 'kitne aaye')) {
     const r = await runTool('get_attendance_summary', {}, ctx)
     if (r.error) return { answer: r.error, tool: 'get_attendance_summary' }
-    return { answer: `Aaj (${r.date}): ${r.present} present, ${r.late} late, ${r.half_day} half day.`, tool: 'get_attendance_summary', data: r }
+    return { answer: `Today (${r.date}): ${r.present} present, ${r.late} late, ${r.half_day} half day.`, tool: 'get_attendance_summary', data: r }
   }
   if (has('payroll', 'salary total', 'total salary')) {
     const r = await runTool('get_payroll_summary', {}, ctx)
@@ -99,10 +99,10 @@ async function fallbackAnswer(question, ctx) {
     return { answer: `${r.month} payroll (${r.status}): gross ${r.total_gross}, net ${r.total_net}.`, tool: 'get_payroll_summary', data: r }
   }
   if (has('grace', '09:15', 'late kab')) {
-    return { answer: 'Office 09:00 baje start hota hai, 15 minute grace hai — 09:15 ke baad check-in "late" count hota hai. Under 5 hours = half day.', tool: 'policy' }
+    return { answer: 'Office starts at 09:00 with a 15-minute grace period — check-ins after 09:15 are marked late. Under 5 hours counts as a half day.', tool: 'policy' }
   }
   return {
-    answer: 'Main in cheezon mein madad kar sakta hoon: headcount, aaj ka attendance, late-comers, kaun leave par hai, apni leave balance, payroll summary (Admin/HR), ya leave policy ke sawal. Poochh lijiye!',
+    answer: 'I can help with: headcount, today\'s attendance, late-comers, who is on leave, your leave balance, payroll summary (Admin/HR), or leave policy questions. Just ask!',
     tool: 'fallback',
   }
 }
@@ -113,7 +113,7 @@ export async function POST(req) {
   if (!user) return json({ error: 'Unauthorized' }, 401)
 
   const { message } = await req.json()
-  if (!message?.trim()) return json({ error: 'Message likhein' }, 400)
+  if (!message?.trim()) return json({ error: 'Please type a message' }, 400)
 
   // rate limit ~20/hour (simple: last hour ki ai_logs count)
   const hourAgo = new Date(Date.now() - 3600e3).toISOString()
@@ -123,7 +123,7 @@ export async function POST(req) {
     .eq('user_id', user.id)
     .gte('created_at', hourAgo)
   if ((count || 0) > 20) {
-    return json({ error: 'Rate limit — thodi der baad try karein (20/hour)' }, 429)
+    return json({ error: 'Rate limit reached — please try again later (20/hour)' }, 429)
   }
 
   const ctx = { supabase, profile }

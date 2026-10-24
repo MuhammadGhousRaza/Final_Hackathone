@@ -27,7 +27,7 @@ export async function POST(req) {
   const { month, year } = await req.json()
   const m = Number(month)
   const y = Number(year)
-  if (!m || m < 1 || m > 12 || !y) return json({ error: 'month aur year zaroori' }, 400)
+  if (!m || m < 1 || m > 12 || !y) return json({ error: 'month and year are required' }, 400)
 
   // Finalized month dobara nahi bana sakta
   const { data: existing } = await session.supabase
@@ -37,7 +37,7 @@ export async function POST(req) {
     .eq('period_year', y)
     .maybeSingle()
   if (existing?.status === 'finalized') {
-    return json({ error: 'Finalized month lock hai — dobara run nahi ho sakta' }, 403)
+    return json({ error: 'This month is finalized and locked — it cannot be re-run' }, 403)
   }
 
   const supabase = session.supabase
@@ -123,7 +123,7 @@ export async function POST(req) {
   // Admin ko notification
   const { data: admins } = await supabase.from('profiles').select('id').eq('role', 'admin')
   for (const a of admins || []) {
-    await notify(supabase, a.id, 'Payroll draft ready', `${m}/${y} ka draft ${slips.length} employees ke saath tyar hai — finalize karo`)
+    await notify(supabase, a.id, 'Payroll draft ready', `Draft for ${m}/${y} is ready with ${slips.length} employees — ready to finalize`)
   }
 
   return json({ runId, employees: slips.length, totalGross, totalNet })

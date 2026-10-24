@@ -6,7 +6,7 @@ export async function POST(req) {
 
   const { password } = await req.json()
   if (!password || password.length < 6) {
-    return json({ error: 'Password min 6 characters ka ho' }, 400)
+    return json({ error: 'Password must be at least 6 characters' }, 400)
   }
 
   const { error } = await supabase.auth.updateUser({ password })

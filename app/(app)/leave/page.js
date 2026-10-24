@@ -67,7 +67,7 @@ export default function LeavePage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white">{isManager ? "Leave Management" : "My Leave"}</h1>
           <p className="mt-1 text-sm text-zinc-500">
-            {isManager ? "Approvals inbox aur history" : "Balance, apply aur history"}
+            {isManager ? "Approvals inbox and history" : "Balance, apply and history"}
           </p>
         </div>
         {!isManager && (
@@ -104,7 +104,7 @@ export default function LeavePage() {
 
       <Card className="mt-4 overflow-hidden">
         {!data.leaves || data.leaves.length === 0 ? (
-          <p className="py-16 text-center text-sm text-zinc-500">Koi leave request nahi</p>
+          <p className="py-16 text-center text-sm text-zinc-500">No leave requests</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
@@ -197,11 +197,11 @@ function ApplyModal({ prefill, onClose, onDone }) {
     <Modal open onClose={onClose} title="Apply for Leave">
       {prefill && (
         <div className="mb-4 flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-3 py-2 text-xs text-emerald-300">
-          <Sparkles className="h-3.5 w-3.5" /> AI ne form pre-fill kiya — check kar ke confirm karein
+          <Sparkles className="h-3.5 w-3.5" /> AI pre-filled the form — review and confirm
         </div>
       )}
       {ok ? (
-        <p className="py-6 text-center text-sm text-emerald-300">Leave request bhej di gayi ✅</p>
+        <p className="py-6 text-center text-sm text-emerald-300">Leave request submitted ✅</p>
       ) : (
         <form onSubmit={submit} className="space-y-4">
           <Select label="Leave type" value={form.leave_type} onChange={(e) => setForm({ ...form, leave_type: e.target.value })}>
@@ -215,7 +215,7 @@ function ApplyModal({ prefill, onClose, onDone }) {
             <Input label="End date" type="date" value={form.end_date} onChange={(e) => setForm({ ...form, end_date: e.target.value })} required />
           </div>
           <Input label="Reason" value={form.reason} onChange={(e) => setForm({ ...form, reason: e.target.value })} placeholder="e.g. family wedding" />
-          <p className="text-[11px] text-zinc-600">Sirf working days count hote hain (weekend + holidays skip)</p>
+          <p className="text-[11px] text-zinc-600">Only working days count (weekends and holidays are skipped)</p>
           {error && <p className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-2.5 text-sm text-red-300">{error}</p>}
           <div className="flex justify-end gap-3">
             <Button type="button" variant="ghost" onClick={onClose}>Cancel</Button>

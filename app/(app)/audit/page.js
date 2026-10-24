@@ -30,7 +30,7 @@ export default function AuditPage() {
 
       <Card className="mt-6 overflow-hidden">
         {!data ? <div className="p-6"><Skeleton className="h-40" /></div> : data.logs.length === 0 ? (
-          <p className="py-16 text-center text-sm text-zinc-500">Abhi koi action log nahi hua</p>
+          <p className="py-16 text-center text-sm text-zinc-500">No actions logged yet</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">

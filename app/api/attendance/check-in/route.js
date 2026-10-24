@@ -18,7 +18,7 @@ export async function POST(req) {
   if (!user) return json({ error: 'Unauthorized' }, 401)
 
   const employeeId = requireEmployeeId(profile)
-  if (!employeeId) return json({ error: 'Aap ka employee record nahi milta' }, 400)
+  if (!employeeId) return json({ error: 'No employee record found for your account' }, 400)
 
   const today = toDateStr(new Date())
   const now = new Date().toISOString()
@@ -32,7 +32,7 @@ export async function POST(req) {
     .maybeSingle()
 
   if (existing?.check_in) {
-    return json({ error: 'Aaj pehle se check-in ho chuka hai' }, 409)
+    return json({ error: 'You have already checked in today' }, 409)
   }
 
   const settings = await loadSettings(supabase)

@@ -32,7 +32,7 @@ export default function DashboardPage() {
   }, [])
 
   if (!data) return <Loading />
-  if (data.error) return <p className="text-zinc-400">Dashboard load nahi hua — refresh karein.</p>
+  if (data.error) return <p className="text-zinc-400">Could not load the dashboard — please refresh.</p>
 
   if (data.role === "admin") return <AdminDash data={data} />
   if (data.role === "hr") return <HrDash data={data} />
@@ -71,7 +71,7 @@ function AdminDash({ data }) {
         <Card className="p-6">
           <h3 className="text-sm font-semibold text-white">Headcount by Department</h3>
           <div className="mt-5 space-y-3">
-            {byDept.length === 0 && <p className="text-xs text-zinc-500">Departments mein employees add karein</p>}
+            {byDept.length === 0 && <p className="text-xs text-zinc-500">Add employees to departments to see the breakdown</p>}
             {byDept.map((d) => (
               <div key={d.name}>
                 <div className="mb-1 flex justify-between text-xs">
@@ -97,7 +97,7 @@ function AdminDash({ data }) {
             </Link>
           </div>
           <div className="mt-4 space-y-2.5">
-            {auditFeed.length === 0 && <p className="text-xs text-zinc-500">Abhi koi action log nahi hua</p>}
+            {auditFeed.length === 0 && <p className="text-xs text-zinc-500">No actions logged yet</p>}
             {auditFeed.map((a) => (
               <div key={a.id} className="flex items-center gap-3 text-xs">
                 <Badge color="zinc">{a.action}</Badge>
@@ -120,7 +120,7 @@ function HrDash({ data }) {
 
   return (
     <div>
-      <PageHead title="HR Dashboard" sub="Aaj ka operation — live numbers" />
+      <PageHead title="HR Dashboard" sub="Today's operations — live numbers" />
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard icon={Users} label="Headcount" value={kpis.headcount} />
@@ -171,7 +171,7 @@ function HrDash({ data }) {
         <Card className="p-6">
           <h3 className="text-sm font-semibold text-white">Top Late-comers (this month)</h3>
           <div className="mt-4 space-y-2">
-            {topLate.length === 0 && <p className="text-xs text-zinc-500">Is month koi late nahi 👏</p>}
+            {topLate.length === 0 && <p className="text-xs text-zinc-500">No one was late this month 👏</p>}
             {topLate.map((l, i) => (
               <div key={l.name} className="flex items-center gap-3 text-sm">
                 <span className="w-5 text-xs text-zinc-600">#{i + 1}</span>
@@ -209,9 +209,9 @@ function EmployeeDash({ data }) {
       <div>
         <PageHead title="Dashboard" sub="Employee dashboard" />
         <Card className="p-10 text-center">
-          <p className="font-semibold text-white">Employee record nahi mila</p>
+          <p className="font-semibold text-white">No employee record found</p>
           <p className="mt-2 text-sm text-zinc-500">
-            Yeh account kisi employee se linked nahi — HR se apna registration confirm karein.
+            This account is not linked to an employee — please confirm your registration with HR.
           </p>
         </Card>
       </div>
@@ -233,7 +233,7 @@ function EmployeeDash({ data }) {
   return (
     <div>
       <PageHead
-        title={`Salam, ${employee?.full_name?.split(' ')[0] || 'Employee'}! 👋`}
+        title={`Welcome, ${employee?.full_name?.split(' ')[0] || 'there'}! 👋`}
         sub={employee ? `${employee.code} · ${employee.department || '—'}` : 'Employee dashboard'}
       />
 
@@ -297,7 +297,7 @@ function EmployeeDash({ data }) {
       </Card>
 
       <p className="mt-6 flex items-center gap-1.5 text-xs text-zinc-600">
-        <Sparkles className="h-3 w-3" /> AI assistant se apna data ya policy poochhein — bottom-right "Ask AI"
+        <Sparkles className="h-3 w-3" /> Ask the AI assistant about your data or company policy — bottom-right "Ask AI"
       </p>
     </div>
   )

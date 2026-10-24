@@ -57,7 +57,7 @@ export default function AnnouncementsPage() {
         ) : items.length === 0 ? (
           <Card className="flex flex-col items-center py-14 text-center">
             <Megaphone className="h-7 w-7 text-zinc-600" />
-            <p className="mt-3 text-sm text-zinc-500">Koi announcement nahi</p>
+            <p className="mt-3 text-sm text-zinc-500">No announcements yet</p>
           </Card>
         ) : (
           items.map((a) => (

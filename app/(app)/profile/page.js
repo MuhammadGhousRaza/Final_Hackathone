@@ -37,7 +37,7 @@ export default function ProfilePage() {
           <Card className="mt-6 p-8 text-center">
             <Briefcase className="mx-auto h-8 w-8 text-zinc-600" />
             <p className="mt-3 text-sm text-zinc-500">
-              Aap ka employee record nahi hai (Admin/HR account). Sirf employees ka profile hota hai.
+              You don't have an employee record (Admin/HR account). Only employees have profiles.
             </p>
           </Card>
         )}
@@ -50,7 +50,7 @@ export default function ProfilePage() {
   return (
     <div>
       <h1 className="text-2xl font-bold tracking-tight text-white">My Profile</h1>
-      <p className="mt-1 text-sm text-zinc-500">Phone aur address edit kar sakte hain — baqi HR se change hoga</p>
+      <p className="mt-1 text-sm text-zinc-500">You can edit phone and address — other changes go through HR</p>
 
       <Card className="mt-6 p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">

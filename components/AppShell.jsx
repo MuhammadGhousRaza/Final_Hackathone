@@ -218,7 +218,7 @@ export default function AppShell({ children }) {
             </button>
           </div>
           <div className="max-h-80 space-y-2 overflow-y-auto">
-            {notifs.length === 0 && <p className="py-6 text-center text-xs text-zinc-500">Koi notification nahi</p>}
+            {notifs.length === 0 && <p className="py-6 text-center text-xs text-zinc-500">No notifications</p>}
             {notifs.map((n) => (
               <div key={n.id} className={`rounded-xl border px-3 py-2 ${n.read ? "border-white/5" : "border-emerald-500/20 bg-emerald-500/5"}`}>
                 <p className="text-xs font-medium text-white">{n.title}</p>
@@ -276,7 +276,7 @@ function LoadingBlock() {
 
 function ChatPanel({ role, onClose, onSmartLeave }) {
   const [messages, setMessages] = useState([
-    { role: "ai", text: "Assalam-o-alaikum! Main aap ka HR assistant hoon. Poochhein: headcount, aaj ka attendance, late-comers, leave balance, ya payroll summary." },
+    { role: "ai", text: "Hello! I'm your HR assistant. Ask me about headcount, today's attendance, late-comers, your leave balance, or payroll." },
   ])
   const [input, setInput] = useState("")
   const [busy, setBusy] = useState(false)
@@ -299,9 +299,9 @@ function ChatPanel({ role, onClose, onSmartLeave }) {
         body: JSON.stringify({ message: text }),
       })
       const data = await res.json()
-      setMessages((m) => [...m, { role: "ai", text: data.answer || data.error || "Maazrat — jawab nahi mila." }])
+      setMessages((m) => [...m, { role: "ai", text: data.answer || data.error || "Sorry — no answer was available." }])
     } catch {
-      setMessages((m) => [...m, { role: "ai", text: "Network error — dobara try karein." }])
+      setMessages((m) => [...m, { role: "ai", text: "Network error — please try again." }])
     }
     setBusy(false)
   }
@@ -374,7 +374,7 @@ function ChatPanel({ role, onClose, onSmartLeave }) {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && send()}
-              placeholder="Kuch bhi poochhein..."
+              placeholder="Ask anything..."
               className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-emerald-400/50 focus:outline-none"
             />
             <Button size="md" onClick={send} loading={busy}>
@@ -397,10 +397,10 @@ function ChatPanel({ role, onClose, onSmartLeave }) {
     const data = await res.json()
     setBusy(false)
     if (data.leave) {
-      setMessages((m) => [...m, { role: "ai", text: `Samajh gaya: ${data.leave.type} leave ${data.leave.start} se ${data.leave.end} tak (${data.leave.reason}). Form khol raha hoon — confirm karein ✅` }])
+      setMessages((m) => [...m, { role: "ai", text: `Got it: ${data.leave.type} leave from ${data.leave.start} to ${data.leave.end} (${data.leave.reason}). Opening the form — please confirm ✅` }])
       setTimeout(() => onSmartLeave({ type: data.leave.type || data.leave.leave_type, start_date: data.leave.start_date || data.leave.start, end_date: data.leave.end_date || data.leave.end, reason: data.leave.reason }), 600)
     } else {
-      setMessages((m) => [...m, { role: "ai", text: data.error || "Dates parse nahi ho sakin — manual form try karein." }])
+      setMessages((m) => [...m, { role: "ai", text: data.error || "Couldn't parse the dates — please use the manual form." }])
     }
   }
 }

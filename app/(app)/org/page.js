@@ -66,7 +66,7 @@ export default function OrgPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold tracking-tight text-white">Org Setup</h1>
-      <p className="mt-1 text-sm text-zinc-500">Company rules — yeh attendance/leave/payroll par apply hote hain</p>
+      <p className="mt-1 text-sm text-zinc-500">Company rules — these apply to attendance, leave and payroll</p>
 
       <Card className="mt-6 p-6">
         <h3 className="flex items-center gap-2 text-sm font-semibold text-white">

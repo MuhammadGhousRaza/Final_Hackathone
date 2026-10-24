@@ -22,10 +22,10 @@ export async function GET() {
 export async function POST(req) {
   const { supabase, user, profile } = await getSession()
   if (!user) return json({ error: 'Unauthorized' }, 401)
-  if (!profile?.employee_id) return json({ error: 'Employee record nahi' }, 400)
+  if (!profile?.employee_id) return json({ error: 'No employee record found for your account' }, 400)
 
   const { work_date, reason } = await req.json()
-  if (!work_date || !reason?.trim()) return json({ error: 'Date aur reason zaroori' }, 400)
+  if (!work_date || !reason?.trim()) return json({ error: 'Date and reason are required' }, 400)
 
   const { data, error } = await supabase
     .from('attendance_corrections')
@@ -48,7 +48,7 @@ export async function PATCH(req) {
 
   const { id, status } = await req.json()
   if (!id || !['approved', 'rejected'].includes(status)) {
-    return json({ error: 'id aur status (approved/rejected) zaroori' }, 400)
+    return json({ error: 'id and status (approved/rejected) are required' }, 400)
   }
 
   const { data: corr } = await session.supabase

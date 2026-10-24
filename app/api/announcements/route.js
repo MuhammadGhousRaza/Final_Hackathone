@@ -19,7 +19,7 @@ export async function POST(req) {
   if (error) return error
 
   const { title, body } = await req.json()
-  if (!title?.trim() || !body?.trim()) return json({ error: 'Title aur body zaroori' }, 400)
+  if (!title?.trim() || !body?.trim()) return json({ error: 'Title and body are required' }, 400)
 
   const { data, error: e } = await session.supabase
     .from('announcements')

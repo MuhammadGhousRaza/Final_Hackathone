@@ -14,7 +14,7 @@ export async function PATCH(req, { params }) {
     .single()
   if (!run) return json({ error: 'Run not found' }, 404)
   if (run.status === 'finalized') {
-    return json({ error: 'Yeh run pehle se finalized hai' }, 400)
+    return json({ error: 'This run is already finalized' }, 400)
   }
 
   await session.supabase
@@ -38,7 +38,7 @@ export async function PATCH(req, { params }) {
   for (const p of profiles || []) profByEmp[p.employee_id] = p.id
   for (const s of slips || []) {
     if (profByEmp[s.employee_id]) {
-      await notify(session.supabase, profByEmp[s.employee_id], 'Payslip ready 🧾', `Aap ki salary process ho gayi — payslip download karein`)
+      await notify(session.supabase, profByEmp[s.employee_id], 'Payslip ready 🧾', `Your salary has been processed — download your payslip`)
     }
   }
 

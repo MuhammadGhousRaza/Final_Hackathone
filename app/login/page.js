@@ -105,16 +105,16 @@ export default function LoginPage() {
 
           {needsSetup && (
             <p className="mt-6 rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-3 text-center text-sm text-emerald-300">
-              System empty hai —{" "}
+              System is empty —{" "}
               <Link href="/setup" className="font-semibold underline">
-                pehle company setup karein
+                set up the company first
               </Link>
             </p>
           )}
         </div>
 
         <p className="mt-6 text-center text-xs text-zinc-600">
-          HCM Lite · Saylani Hackathon · Admin, HR & Employee logins
+          HCM Lite · Admin, HR & Employee logins
         </p>
       </div>
     </div>

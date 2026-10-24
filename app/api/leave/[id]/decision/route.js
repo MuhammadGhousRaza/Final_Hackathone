@@ -45,7 +45,7 @@ export async function PATCH(req, { params }) {
       session.supabase,
       empProfile.id,
       `Leave ${status === 'approved' ? 'approved ✅' : 'rejected ❌'}`,
-      `${leave.days} din ki ${leave.leave_type} leave ${status}${comment ? ' — ' + comment : ''}`
+      `${leave.days}-day ${leave.leave_type} leave ${status}${comment ? ' — ' + comment : ''}`
     )
   }
 

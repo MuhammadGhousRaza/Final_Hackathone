@@ -39,7 +39,7 @@ export default function SetupPage() {
           </div>
           <h1 className="mt-6 text-xl font-bold text-white">Company ready! 🎉</h1>
           <p className="mt-3 text-sm leading-relaxed text-zinc-400">
-            Admin account ban gaya. Ab sign in kar ke HR logins aur employees add karein.
+            Your admin account is ready. Sign in to create HR logins and add employees.
           </p>
           <Button className="mt-6 w-full" size="lg" onClick={() => router.push("/login")}>
             Continue to Sign in
@@ -67,13 +67,13 @@ export default function SetupPage() {
           <p className="text-xs font-medium uppercase tracking-widest text-emerald-400">First-run setup</p>
           <h1 className="mt-2 text-2xl font-bold text-white">Company + Admin account</h1>
           <p className="mt-2 text-sm text-zinc-400">
-            Yeh ek dafa hota hai — iske baad Admin HR banayega, HR employees.
+            This happens only once — then Admin creates HR, and HR registers employees.
           </p>
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-4">
             <Input
               label="Company name"
-              placeholder="Saylani Tech (Pvt) Ltd"
+              placeholder="NovaTech Solutions"
               value={form.company}
               onChange={(e) => setForm({ ...form, company: e.target.value })}
               required

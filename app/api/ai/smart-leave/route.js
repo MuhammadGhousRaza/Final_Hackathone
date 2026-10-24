@@ -128,7 +128,7 @@ export async function POST(req) {
   }
 
   if (!start) {
-    return json({ error: 'Dates samajh nahi aayin — form manually bhar lein (maslan: "next Monday and Tuesday off for wedding")', ai_generated: true })
+    return json({ error: 'Couldn\'t parse the dates — please fill the form manually (e.g. "next Monday and Tuesday off for wedding")', ai_generated: true })
   }
 
   // reason: "for ..." ke baad

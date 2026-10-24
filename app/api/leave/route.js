@@ -56,14 +56,14 @@ export async function GET(req) {
 export async function POST(req) {
   const { supabase, user, profile } = await getSession()
   if (!user) return json({ error: 'Unauthorized' }, 401)
-  if (!profile?.employee_id) return json({ error: 'Employee record nahi' }, 400)
+  if (!profile?.employee_id) return json({ error: 'No employee record found for your account' }, 400)
 
   const { leave_type, start_date, end_date, reason } = await req.json()
   if (!leave_type || !start_date || !end_date) {
-    return json({ error: 'Type, start aur end date zaroori' }, 400)
+    return json({ error: 'Type, start and end date are required' }, 400)
   }
   if (new Date(start_date) > new Date(end_date)) {
-    return json({ error: 'End date start se pehle nahi ho sakti' }, 400)
+    return json({ error: 'End date cannot be before start date' }, 400)
   }
 
   const [settingsRes, holidaysRes] = await Promise.all([
@@ -75,7 +75,7 @@ export async function POST(req) {
 
   const days = workingDaysBetween(start_date, end_date, weekendDays, holidaySet)
   if (days === 0) {
-    return json({ error: 'Selected dates par koi working day nahi (weekend/holiday)' }, 422)
+    return json({ error: 'No working days in the selected dates (weekend/holiday)' }, 422)
   }
 
   // Overlap check — pending/approved leaves se
@@ -88,7 +88,7 @@ export async function POST(req) {
     .gte('end_date', start_date)
 
   if (overlapping?.length > 0) {
-    return json({ error: 'In dates par pehle se leave pending/approved hai' }, 422)
+    return json({ error: 'You already have a pending or approved leave on these dates' }, 422)
   }
 
   // Balance check (unpaid unlimited)
@@ -112,7 +112,7 @@ export async function POST(req) {
     const used = (approved || []).reduce((s, l) => s + Number(l.days), 0)
     if (type?.annual_quota !== null && used + days > (type?.annual_quota ?? 0)) {
       return json(
-        { error: `Balance kam hai — used ${used}, quota ${type?.annual_quota}, request ${days} din ki` },
+        { error: `Insufficient balance — used ${used}, quota ${type?.annual_quota}, requesting ${days} days` },
         422
       )
     }
@@ -138,7 +138,7 @@ export async function POST(req) {
   // HR/admin ko notification
   const { data: managers } = await supabase.from('profiles').select('id').in('role', ['hr', 'admin'])
   for (const m of managers || []) {
-    await notify(supabase, m.id, 'New leave request', `${data.days} din ki ${leave_type} leave pending hai`)
+    await notify(supabase, m.id, 'New leave request', `${data.days}-day ${leave_type} leave request is pending`)
   }
 
   return json({ leave: data })
@@ -155,10 +155,10 @@ export async function PATCH(req) {
 
   const isManager = profile?.role === 'admin' || profile?.role === 'hr'
   if (!isManager && leave.employee_id !== profile?.employee_id) {
-    return json({ error: 'Sirf apni leave cancel kar sakte hain' }, 403)
+    return json({ error: 'You can only cancel your own leave' }, 403)
   }
   if (leave.status !== 'pending') {
-    return json({ error: 'Sirf pending leave cancel ho sakti hai' }, 400)
+    return json({ error: 'Only pending leave can be cancelled' }, 400)
   }
 
   await supabase.from('leave_requests').update({ status: 'cancelled' }).eq('id', id)

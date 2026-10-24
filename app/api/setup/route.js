@@ -17,7 +17,7 @@ export async function POST(req) {
   const { company, fullName, email, password } = body
 
   if (!company || !fullName || !email || !password || password.length < 6) {
-    return json({ error: 'Sab fields zaroori hain (password min 6 chars)' }, 400)
+    return json({ error: 'All fields are required (password min 6 chars)' }, 400)
   }
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -26,7 +26,7 @@ export async function POST(req) {
 
   const { count } = await db.from('company_settings').select('*', { count: 'exact', head: true })
   if (count > 0) {
-    return json({ error: 'Setup already complete — login karo' }, 403)
+    return json({ error: 'Setup already complete — please sign in' }, 403)
   }
 
   const res = await createUserWithProfile({ email, password, fullName, role: 'admin' })

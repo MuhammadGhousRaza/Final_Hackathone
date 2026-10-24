@@ -15,7 +15,7 @@ export default function ChangePasswordPage() {
   async function handleSubmit(e) {
     e.preventDefault();
     if (password !== confirm) {
-      setError("Passwords match nahi kar rahe");
+      setError("Passwords do not match");
       return;
     }
     setLoading(true);
@@ -42,10 +42,10 @@ export default function ChangePasswordPage() {
           <KeyRound className="h-6 w-6 text-emerald-400" />
         </div>
         <h1 className="mt-6 text-center text-xl font-bold text-white">
-          Temporary password change karein
+          Change your temporary password
         </h1>
         <p className="mt-2 text-center text-sm text-zinc-400">
-          Pehli baar sign-in kar rahe hain — naya password set karein
+          First sign-in detected — please set a new password
         </p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">

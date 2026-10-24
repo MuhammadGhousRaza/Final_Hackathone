@@ -31,7 +31,7 @@ export default function Employee360() {
   return (
     <div>
       <h1 className="text-2xl font-bold tracking-tight text-white">Employee 360</h1>
-      <p className="mt-1 text-sm text-zinc-500">Poori ek nazar mein — profile, attendance, leave, payslips</p>
+      <p className="mt-1 text-sm text-zinc-500">Everything at a glance — profile, attendance, leave, payslips</p>
 
       <Card className="mt-6 p-6">
         <div className="flex flex-wrap items-start justify-between gap-6">
@@ -62,7 +62,7 @@ export default function Employee360() {
             <CalendarCheck className="h-4 w-4 text-emerald-400" /> Attendance (last 30)
           </h3>
           <div className="mt-4 grid grid-cols-10 gap-1.5">
-            {attendance.length === 0 && <p className="col-span-10 text-xs text-zinc-500">Koi record nahi</p>}
+            {attendance.length === 0 && <p className="col-span-10 text-xs text-zinc-500">No records</p>}
             {attendance.map((a) => (
               <div
                 key={a.id}
@@ -92,7 +92,7 @@ export default function Employee360() {
             <ClipboardList className="h-4 w-4 text-emerald-400" /> Leave History
           </h3>
           <div className="mt-4 space-y-2">
-            {leaves.length === 0 && <p className="text-xs text-zinc-500">Koi leave nahi</p>}
+            {leaves.length === 0 && <p className="text-xs text-zinc-500">No leave records</p>}
             {leaves.map((l) => (
               <div key={l.id} className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2 text-sm">
                 <Badge color="cyan">{l.leave_type}</Badge>
