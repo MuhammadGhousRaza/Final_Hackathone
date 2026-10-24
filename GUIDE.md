@@ -12,7 +12,7 @@
 | Next.js 16 (JavaScript) + Tailwind CSS | ✅ Ready |
 | Supabase packages (`supabase-js`, `ssr`) | ✅ Installed |
 | Supabase boilerplate (client/server/middleware) | ✅ Ready |
-| Supabase project + API keys | ⏳ **Aap ka kaam (raat ko)** |
+| Supabase project + API keys | ✅ Done (24 Oct — connection tested) |
 | Hackathon task ka code | ⏳ Task milne par |
 | Testing + deploy | ⏳ Aakhri stage |
 

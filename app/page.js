@@ -2,7 +2,7 @@ export default function Home() {
   const steps = [
     { name: "Next.js setup (JavaScript + Tailwind)", done: true },
     { name: "Supabase boilerplate ready", done: true },
-    { name: "Supabase project + API keys (.env.local)", done: false },
+    { name: "Supabase project + API keys (.env.local)", done: true },
     { name: "Hackathon task ka code", done: false },
     { name: "Testing + final demo", done: false },
   ];
