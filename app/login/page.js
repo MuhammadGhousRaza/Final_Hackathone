@@ -62,7 +62,7 @@ export default function LoginPage() {
             <Building2 className="h-4 w-4 text-zinc-950" strokeWidth={2.5} />
           </div>
           <div className="text-left">
-            <span className="block text-xl font-bold text-white">{company || "HCM Lite"}</span>
+            <span className="block text-xl font-bold text-white">{company || "NovaHR"}</span>
             <span className="block text-[11px] uppercase tracking-widest text-zinc-500">AI-assisted HR</span>
           </div>
         </Link>
@@ -114,7 +114,7 @@ export default function LoginPage() {
         </div>
 
         <p className="mt-6 text-center text-xs text-zinc-600">
-          HCM Lite · Admin, HR & Employee logins
+          NovaHR · Admin, HR & Employee logins
         </p>
       </div>
     </div>

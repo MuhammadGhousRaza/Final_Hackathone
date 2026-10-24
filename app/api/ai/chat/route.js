@@ -4,7 +4,7 @@ import { toDateStr } from '@/lib/rules'
 
 // ============ POLICY PROMPT (brief Section 3 rules) ============
 function policyPrompt(profile) {
-  return `You are the HR assistant inside "HCM Lite". Today is ${toDateStr(new Date())}.
+  return `You are the HR assistant inside "NovaHR". Today is ${toDateStr(new Date())}.
 Your user role: ${profile?.role || 'employee'}.
 
 STRICT RULES:

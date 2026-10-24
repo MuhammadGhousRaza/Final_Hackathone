@@ -12,9 +12,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Pulse — Smart Task Intelligence",
+  title: "NovaHR — AI-assisted HR Management",
   description:
-    "A modern dashboard built with Next.js and Supabase. Track, manage, and ship faster.",
+    "A modern dashboard built with Next.js and Supabase. AI-assisted Human Capital Management",
 };
 
 export default function RootLayout({ children }) {

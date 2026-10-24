@@ -1,4 +1,4 @@
-# HCM Lite — AI-assisted Human Capital Management
+# NovaHR — AI-assisted Human Capital Management (HCM Lite)
 
 Saylani Hackathon · 24 Oct 2026 · Built by **Muhammad Ghous Raza**
 

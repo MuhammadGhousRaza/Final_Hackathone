@@ -43,7 +43,7 @@ export default function Home() {
           <div className="rounded-xl bg-gradient-to-br from-emerald-400 to-teal-400 p-2 shadow-lg shadow-emerald-500/25">
             <Building2 className="h-4 w-4 text-zinc-950" strokeWidth={2.5} />
           </div>
-          <span className="text-lg font-bold text-white">HCM Lite</span>
+          <span className="text-lg font-bold text-white">NovaHR</span>
         </div>
         <Link href="/login">
           <Button size="sm" variant="secondary">Sign in</Button>

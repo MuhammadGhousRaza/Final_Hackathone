@@ -123,8 +123,8 @@ export default function AppShell({ children }) {
             <Building2 className="h-4 w-4 text-zinc-950" strokeWidth={2.5} />
           </div>
           <div className="min-w-0">
-            <p className="truncate text-sm font-bold text-white">{me?.company || "HCM Lite"}</p>
-            <p className="text-[10px] uppercase tracking-wider text-zinc-500">HCM Lite</p>
+            <p className="truncate text-sm font-bold text-white">{me?.company || "NovaHR"}</p>
+            <p className="text-[10px] uppercase tracking-wider text-zinc-500">NovaHR</p>
           </div>
         </Link>
 
@@ -185,7 +185,7 @@ export default function AppShell({ children }) {
           <div className="rounded-lg bg-gradient-to-br from-emerald-400 to-teal-400 p-1.5">
             <Building2 className="h-3 w-3 text-zinc-950" strokeWidth={2.5} />
           </div>
-          <span className="text-sm font-bold text-white">{me?.company || "HCM Lite"}</span>
+          <span className="text-sm font-bold text-white">{me?.company || "NovaHR"}</span>
         </Link>
         <div className="flex items-center gap-1">
           <button onClick={() => setNotifOpen(!notifOpen)} className="relative rounded-lg p-2 text-zinc-400 cursor-pointer">

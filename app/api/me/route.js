@@ -31,5 +31,5 @@ export async function GET() {
     employee = data
   }
 
-  return json({ profile: prof, employee, company: company?.name || 'HCM Lite' })
+  return json({ profile: prof, employee, company: company?.name || 'NovaHR' })
 }
