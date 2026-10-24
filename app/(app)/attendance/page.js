@@ -18,7 +18,7 @@ export default function AttendancePage() {
 
   if (!me) return <Skeleton className="h-96" />
   const isManager = me.profile?.role === "admin" || me.profile?.role === "hr"
-  return isManager ? <ManagerView /> : <EmployeeView me={me} />
+  return isManager ? <ManagerView me={me} /> : <EmployeeView me={me} />
 }
 
 /* ================= EMPLOYEE ================= */
@@ -212,22 +212,45 @@ function CorrectionModal({ onClose, onDone }) {
 }
 
 /* ================= MANAGER ================= */
-function ManagerView() {
+function ManagerView({ me }) {
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
   const [board, setBoard] = useState(null)
   const [corrections, setCorrections] = useState([])
   const [tab, setTab] = useState("board")
+  const [myToday, setMyToday] = useState(null)
+  const [punching, setPunching] = useState(null)
+
+  const canCheckIn = !!me?.profile?.employee_id
+  const todayStr = new Date().toISOString().slice(0, 10)
 
   const load = useCallback(async () => {
-    const [b, c] = await Promise.all([
+    const fetches = [
       fetch(`/api/attendance/board?date=${date}`),
       fetch("/api/attendance/corrections"),
-    ])
+    ]
+    if (canCheckIn) fetches.push(fetch(`/api/attendance/calendar?month=${todayStr.slice(0, 7)}`))
+    const [b, c, cal] = await Promise.all(fetches)
     if (b.ok) setBoard(await b.json())
     if (c.ok) setCorrections((await c.json()).corrections)
-  }, [date])
+    if (cal && cal.ok) {
+      const d = await cal.json()
+      setMyToday(d.attendance?.find((a) => a.work_date === todayStr) || null)
+    }
+  }, [date, canCheckIn, todayStr])
 
   useEffect(() => { load() }, [load])
+
+  async function punch(type) {
+    setPunching(type)
+    const res = await fetch(`/api/attendance/${type}`, { method: "POST" })
+    const d = await res.json()
+    setPunching(null)
+    if (!res.ok) {
+      alert(d.error)
+      return
+    }
+    load()
+  }
 
   async function decide(id, status) {
     await fetch("/api/attendance/corrections", {
@@ -254,6 +277,39 @@ function ManagerView() {
           className="rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white focus:outline-none [&::-webkit-calendar-picker-indicator]:invert"
         />
       </div>
+
+      {canCheckIn && (
+        <Card className="mt-6 p-5">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-widest text-zinc-500">My check-in today</p>
+              <p className="mt-1 text-lg font-bold capitalize text-white">
+                {myToday ? myToday.status.replace("_", " ") : "Not checked in"}
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Button
+                size="sm"
+                variant={myToday?.check_in ? "secondary" : "primary"}
+                loading={punching === "check-in"}
+                disabled={!!myToday?.check_in}
+                onClick={() => punch("check-in")}
+              >
+                <LogIn className="h-4 w-4" /> Check In
+              </Button>
+              <Button
+                size="sm"
+                variant={myToday?.check_out ? "secondary" : "primary"}
+                loading={punching === "check-out"}
+                disabled={!myToday?.check_in || !!myToday?.check_out}
+                onClick={() => punch("check-out")}
+              >
+                <LogOut className="h-4 w-4" /> Check Out
+              </Button>
+            </div>
+          </div>
+        </Card>
+      )}
 
       {board && (
         <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">

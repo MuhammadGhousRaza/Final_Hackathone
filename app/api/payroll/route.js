@@ -72,6 +72,7 @@ export async function POST(req) {
   const slips = []
   const today = toDateStr(new Date())
   for (const emp of empsRes.data || []) {
+    if (Number(emp.basic_salary) <= 0) continue // HR/support staff not on payroll
     if (emp.status === "exited" && emp.exit_date && emp.exit_date < monthStart) continue
     if (emp.join_date > monthEnd) continue
     if (emp.join_date > monthStart || (emp.exit_date && emp.exit_date < monthEnd)) {
