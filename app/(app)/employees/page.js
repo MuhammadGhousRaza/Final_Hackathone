@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Copy, Search, UserPlus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Copy, KeyRound, Search, UserPlus } from "lucide-react";
 import { Badge, Button, Card, Input, Modal, Select, Skeleton } from "@/components/ui";
 
 const money = (n) => 'Rs ' + Math.round(Number(n) || 0).toLocaleString()
@@ -14,6 +14,7 @@ export default function EmployeesPage() {
   const [dept, setDept] = useState("")
   const [page, setPage] = useState(1)
   const [modal, setModal] = useState(false)
+  const [reset, setReset] = useState(null) // { name, password }
 
   const load = useCallback(async () => {
     const params = new URLSearchParams()
@@ -34,6 +35,21 @@ export default function EmployeesPage() {
   }, [load, q])
 
   const totalPages = data ? Math.max(1, Math.ceil(data.total / data.perPage)) : 1
+
+  async function doReset(emp) {
+    if (!confirm(`Reset ${emp.full_name}'s password?`)) return
+    const res = await fetch("/api/users/reset", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ employeeId: emp.id }),
+    })
+    const d = await res.json()
+    if (!res.ok) {
+      alert(d.error || "Reset failed")
+      return
+    }
+    setReset({ name: d.name, password: d.tempPassword })
+  }
 
   return (
     <div>
@@ -89,6 +105,7 @@ export default function EmployeesPage() {
                   <th className="px-5 py-4 font-medium">Joined</th>
                   <th className="px-5 py-4 font-medium">Gross Salary</th>
                   <th className="px-5 py-4 font-medium">Status</th>
+                  <th className="px-5 py-4 font-medium text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -107,6 +124,15 @@ export default function EmployeesPage() {
                       <Badge color={e.status === "active" ? "emerald" : e.status === "probation" ? "amber" : "red"}>
                         {e.status}
                       </Badge>
+                    </td>
+                    <td className="px-5 py-3.5 text-right">
+                      <button
+                        onClick={() => doReset(e)}
+                        title="Reset password"
+                        className="rounded-lg p-2 text-zinc-600 transition-all hover:bg-emerald-500/10 hover:text-emerald-300 cursor-pointer"
+                      >
+                        <KeyRound className="h-4 w-4" />
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -137,6 +163,27 @@ export default function EmployeesPage() {
             load()
           }}
         />
+      )}
+
+      {reset && (
+        <Modal open onClose={() => setReset(null)} title="Password Reset ✅">
+          <p className="text-sm text-zinc-300">
+            <strong className="text-white">{reset.name}</strong>&apos;s new temporary password:
+          </p>
+          <div className="mt-4 flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3">
+            <code className="flex-1 break-all font-mono text-sm text-emerald-300">{reset.password}</code>
+            <button
+              onClick={() => navigator.clipboard.writeText(reset.password)}
+              className="rounded-lg p-2 text-zinc-400 hover:bg-white/5 hover:text-white cursor-pointer"
+            >
+              <Copy className="h-4 w-4" />
+            </button>
+          </div>
+          <p className="mt-3 text-xs text-zinc-500">
+            Yeh ek baar dikha raha hai — copy kar lo. Employee pehli login par change karega.
+          </p>
+          <Button className="mt-5 w-full" onClick={() => setReset(null)}>Done</Button>
+        </Modal>
       )}
     </div>
   )

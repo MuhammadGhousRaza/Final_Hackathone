@@ -7,6 +7,7 @@ import { Badge, Button, Card, Input, Modal, Skeleton } from "@/components/ui";
 export default function UsersPage() {
   const [users, setUsers] = useState(null)
   const [modal, setModal] = useState(false)
+  const [reset, setReset] = useState(null)
 
   const load = useCallback(async () => {
     const res = await fetch("/api/users")
@@ -20,6 +21,22 @@ export default function UsersPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: u.id, active: !u.active }),
     })
+    load()
+  }
+
+  async function doReset(u) {
+    if (!confirm(`Reset ${u.full_name}'s password?`)) return
+    const res = await fetch("/api/users/reset", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: u.id }),
+    })
+    const d = await res.json()
+    if (!res.ok) {
+      alert(d.error || "Reset failed")
+      return
+    }
+    setReset({ name: d.name, password: d.tempPassword })
     load()
   }
 
@@ -59,11 +76,16 @@ export default function UsersPage() {
                     <Badge color={u.active ? "emerald" : "red"}>{u.active ? "active" : "deactivated"}</Badge>
                   </td>
                   <td className="px-5 py-3.5 text-right">
-                    {u.role !== "admin" && (
-                      <Button size="sm" variant={u.active ? "danger" : "secondary"} onClick={() => toggleActive(u)}>
-                        {u.active ? "Deactivate" : "Activate"}
+                    <div className="flex justify-end gap-2">
+                      <Button size="sm" variant="secondary" onClick={() => doReset(u)}>
+                        Reset Password
                       </Button>
-                    )}
+                      {u.role !== "admin" && (
+                        <Button size="sm" variant={u.active ? "danger" : "secondary"} onClick={() => toggleActive(u)}>
+                          {u.active ? "Deactivate" : "Activate"}
+                        </Button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -73,6 +95,25 @@ export default function UsersPage() {
       </Card>
 
       {modal && <CreateHRModal onClose={() => setModal(false)} onDone={() => { setModal(false); load() }} />}
+
+      {reset && (
+        <Modal open onClose={() => setReset(null)} title="Password Reset ✅">
+          <p className="text-sm text-zinc-300">
+            <strong className="text-white">{reset.name}</strong>&apos;s new temporary password:
+          </p>
+          <div className="mt-4 flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3">
+            <code className="flex-1 break-all font-mono text-sm text-emerald-300">{reset.password}</code>
+            <button
+              onClick={() => navigator.clipboard.writeText(reset.password)}
+              className="rounded-lg p-2 text-zinc-400 hover:bg-white/5 hover:text-white cursor-pointer"
+            >
+              <Copy className="h-4 w-4" />
+            </button>
+          </div>
+          <p className="mt-3 text-xs text-zinc-500">Copy kar lo — yeh ek baar dikha raha hai.</p>
+          <Button className="mt-5 w-full" onClick={() => setReset(null)}>Done</Button>
+        </Modal>
+      )}
     </div>
   )
 }

@@ -7,10 +7,12 @@ import { Button, Input } from "@/components/ui";
 
 export default function ChangePasswordPage() {
   const router = useRouter();
+  const [current, setCurrent] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [done, setDone] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -23,16 +25,19 @@ export default function ChangePasswordPage() {
     const res = await fetch("/api/change-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password }),
+      body: JSON.stringify({ current, password }),
     });
     const data = await res.json();
     setLoading(false);
     if (!res.ok) {
-      setError(data.error || "Fail hua");
+      setError(data.error || "Something went wrong");
       return;
     }
-    router.push("/dashboard");
-    router.refresh();
+    setDone(true);
+    setTimeout(() => {
+      router.push("/dashboard");
+      router.refresh();
+    }, 1200);
   }
 
   return (
@@ -42,23 +47,32 @@ export default function ChangePasswordPage() {
           <KeyRound className="h-6 w-6 text-emerald-400" />
         </div>
         <h1 className="mt-6 text-center text-xl font-bold text-white">
-          Change your temporary password
+          {done ? "Password updated ✅" : "Change password"}
         </h1>
         <p className="mt-2 text-center text-sm text-zinc-400">
-          First sign-in detected — please set a new password
+          {done
+            ? "Redirecting to your dashboard..."
+            : "Enter your current password and pick a new one"}
         </p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+          <Input
+            label="Current password"
+            type="password"
+            value={current}
+            onChange={(e) => setCurrent(e.target.value)}
+            required
+            autoFocus
+          />
           <Input
             label="New password (min 6 chars)"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            autoFocus
           />
           <Input
-            label="Confirm password"
+            label="Confirm new password"
             type="password"
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
@@ -69,8 +83,8 @@ export default function ChangePasswordPage() {
               {error}
             </p>
           )}
-          <Button type="submit" loading={loading} className="w-full" size="lg">
-            Set password
+          <Button type="submit" loading={loading} disabled={done} className="w-full" size="lg">
+            {done ? "Updated" : "Update password"}
           </Button>
         </form>
       </div>

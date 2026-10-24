@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Bell,
+  KeyRound,
   Briefcase,
   Building2,
   CalendarCheck,
@@ -159,6 +160,13 @@ export default function AppShell({ children }) {
                   {me.profile.role.toUpperCase()}
                 </Badge>
               </div>
+              <button
+                onClick={() => router.push("/change-password")}
+                title="Change Password"
+                className="rounded-lg p-2 text-zinc-500 transition-colors hover:bg-white/5 hover:text-emerald-300 cursor-pointer"
+              >
+                <KeyRound className="h-4 w-4" />
+              </button>
               <button
                 onClick={logout}
                 title="Logout"
