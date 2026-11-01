@@ -43,7 +43,7 @@ npm run dev
 | Admin | admin@saylani.tech | admin789 |
 | HR | hr@saylani.tech | hr789456 |
 | Employee | ali@saylani.tech | ali12345 |
-| Employee | sana@saylani.tech | Hcm@41ndw11! (temp — change on login) |
+| Employee | sana@saylani.tech | sana12345 |
 
 > Judges: start from `/setup` on a fresh database — the wizard creates the company + Admin in one screen.
 
