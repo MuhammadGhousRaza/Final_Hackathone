@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Copy, KeyRound, Search, UserPlus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Copy, Edit3, KeyRound, Search, UserPlus } from "lucide-react";
 import { Badge, Button, Card, Input, Modal, Select, Skeleton } from "@/components/ui";
 
 const money = (n) => 'Rs ' + Math.round(Number(n) || 0).toLocaleString()
@@ -14,6 +14,7 @@ export default function EmployeesPage() {
   const [dept, setDept] = useState("")
   const [page, setPage] = useState(1)
   const [modal, setModal] = useState(false)
+  const [editing, setEditing] = useState(null)
   const [reset, setReset] = useState(null) // { name, password }
 
   const load = useCallback(async () => {
@@ -127,6 +128,13 @@ export default function EmployeesPage() {
                     </td>
                     <td className="px-5 py-3.5 text-right">
                       <button
+                        onClick={() => setEditing(e)}
+                        title="Edit employee"
+                        className="rounded-lg p-2 text-zinc-600 transition-all hover:bg-emerald-500/10 hover:text-emerald-300 cursor-pointer"
+                      >
+                        <Edit3 className="h-4 w-4" />
+                      </button>
+                      <button
                         onClick={() => doReset(e)}
                         title="Reset password"
                         className="rounded-lg p-2 text-zinc-600 transition-all hover:bg-emerald-500/10 hover:text-emerald-300 cursor-pointer"
@@ -165,6 +173,18 @@ export default function EmployeesPage() {
         />
       )}
 
+      {editing && (
+        <EditEmployeeModal
+          employee={editing}
+          org={org}
+          onClose={() => setEditing(null)}
+          onDone={() => {
+            setEditing(null)
+            load()
+          }}
+        />
+      )}
+
       {reset && (
         <Modal open onClose={() => setReset(null)} title="Password Reset ✅">
           <p className="text-sm text-zinc-300">
@@ -186,6 +206,86 @@ export default function EmployeesPage() {
         </Modal>
       )}
     </div>
+  )
+}
+
+function EditEmployeeModal({ employee, org, onClose, onDone }) {
+  const [form, setForm] = useState({
+    full_name: employee.full_name || "",
+    phone: employee.phone || "",
+    address: employee.address || "",
+    gender: employee.gender || "male",
+    department_id: employee.department_id || "",
+    designation: employee.designation || "",
+    join_date: employee.join_date || "",
+    exit_date: employee.exit_date || "",
+    status: employee.status || "active",
+    basic_salary: employee.basic_salary ?? "",
+  })
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState("")
+
+  async function submit(e) {
+    e.preventDefault()
+    setSaving(true)
+    setError("")
+    const res = await fetch(`/api/employees/${employee.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...form,
+        basic_salary: Number(form.basic_salary),
+        exit_date: form.exit_date || null,
+      }),
+    })
+    const data = await res.json()
+    setSaving(false)
+    if (!res.ok) {
+      setError(data.error || "Employee update nahi ho saka")
+      return
+    }
+    onDone()
+  }
+
+  return (
+    <Modal open onClose={onClose} title="Edit Employee">
+      <form onSubmit={submit} className="space-y-4">
+        <Input label="Full name" value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} required />
+        <div className="grid grid-cols-2 gap-3">
+          <Input label="Phone" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+          <Select label="Gender" value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })}>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </Select>
+        </div>
+        <Input label="Address" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
+        <div className="grid grid-cols-2 gap-3">
+          <Select label="Department" value={form.department_id} onChange={(e) => setForm({ ...form, department_id: e.target.value })} required>
+            <option value="">Select...</option>
+            {org?.departments?.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
+          </Select>
+          <Input label="Designation" value={form.designation} onChange={(e) => setForm({ ...form, designation: e.target.value })} />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <Input label="Join date" type="date" value={form.join_date} onChange={(e) => setForm({ ...form, join_date: e.target.value })} required />
+          <Input label="Basic salary (Rs)" type="number" min="0" value={form.basic_salary} onChange={(e) => setForm({ ...form, basic_salary: e.target.value })} required />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <Select label="Status" value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })}>
+            <option value="active">Active</option>
+            <option value="probation">Probation</option>
+            <option value="exited">Exited</option>
+          </Select>
+          <Input label="Exit date" type="date" value={form.exit_date} onChange={(e) => setForm({ ...form, exit_date: e.target.value })} />
+        </div>
+        {error && <p className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-2.5 text-sm text-red-300">{error}</p>}
+        <div className="flex justify-end gap-3 pt-2">
+          <Button type="button" variant="ghost" onClick={onClose}>Cancel</Button>
+          <Button type="submit" loading={saving}>Save changes</Button>
+        </div>
+      </form>
+    </Modal>
   )
 }
 

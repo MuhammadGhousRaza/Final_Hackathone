@@ -35,6 +35,12 @@
 - Purani `demo_tasks` hat jayegi, naye HCM tables banenge (employees, attendance, leave, payroll waghera)
 - Supabase → SQL Editor → New query → main jo SQL doon paste → Run → "Success" ka msg mujhe batao
 
+#### STEP 1B — Existing demo/login ko fresh karna
+- Agar database mein pehle se company ya login bana hua hai, `supabase/reset.sql` ko Supabase → SQL Editor mein **sirf ek dafa** run karein
+- Is se purane auth users, company, HR, employees aur app data delete ho jayega
+- Default leave rules dobara add hongi; us ke baad naya user `/setup` par company + Admin banayega, phir Admin `/users` se HR banayega
+- Yeh destructive reset hai — isay production data par run na karein
+
 #### STEP 2 — AI API key (10 min, OPTIONAL lekin 15 points ka hai!)
 AI assistant ke liye **free LLM API key** chahiye. Sab se easy (free + fast):
 1. **[console.groq.com](https://console.groq.com)** kholen → Google/GitHub se sign up (free)
